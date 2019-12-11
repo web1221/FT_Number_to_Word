@@ -50,32 +50,47 @@ class Converter
     @word = ''
   end
 
-  def single_digit
-      @single_digit.each do |key, value|
-        if @split_num[0] == key
-          @word.concat(" " + value)
-        end
+  def single_digit(i)
+    @single_digit.each do |key, value|
+      if @split_num[i - 1] == key
+        @word.concat(" " + value)
       end
+    end
     @word
   end
 
-  def tens_place
-      @tens.each do |key, value|
-        if @split_num[0] == key
-          @word.concat(value)
-          single_digit()
-        end
+  def tens_place(i)
+    @tens.each do |key, value|
+      if @split_num[i - 2] == key
+        @word.concat(value)
+        single_digit(i)
       end
+    end
+    @word
+  end
+
+  def hundreds_place(i)
+    @single_digit.each do |key, value|
+      if @split_num[0] == key
+        @word.concat(value + " hundred ")
+        tens_place(i)
+      end
+    end
     @word
   end
 
   def num_to_word
-
-    if @split_num.length >= 2
-      self.tens_place
-    elsif @split_num.length < 2
-      self.single_digit
+    i = @split_num.length
+    if i == 3
+      self.hundreds_place(i)
+      # i -=1
+    elsif i >= 2
+      self.tens_place(i)
+      # i -=1
+    elsif i < 2
+      self.single_digit(i)
     end
     @word.strip
+    # i
   end
 end
